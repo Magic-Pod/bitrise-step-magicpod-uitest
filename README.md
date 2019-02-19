@@ -1,0 +1,1 @@
+# bitrise-step-magicpod-uitest
