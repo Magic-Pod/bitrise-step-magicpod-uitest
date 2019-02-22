@@ -52,87 +52,109 @@ toolkit:
 inputs:
   - environment: "Magic Pod"
     opts:
-      title: "environment"
+      title: "Environment"
       description: |-
         Environment (cloud service) on which you want to execute your tests.
         Each environment has its own limitation of OS/devices.  Please refer to project batch runs page for available choices.
       value_options: ["Magic Pod", "Remote TestKit"]
       is_required: true
-      is_expand: false
+      is_expand: true
   - os: "iOS"
     opts:
       title: "OS"
       description: |-
         Currently you can select only 
-        * "iOS" for Magic Pod cloud service.
-        * "Android" for Remote TestKit.
+
+        * _iOS_ for Magic Pod cloud service.
+        * _Android_ for Remote TestKit.
       is_required: true
       value_options: ["iOS", "Android"]
+      is_expand: true
   - device_type: "Simulator"
     opts:
-      title: "device type"
+      title: "Device type"
       description: |-
         Currently you can selet only
-        * "Simulator" for Magic Pod cloud service."
-        * "Real Device" for Remote TestKit.
+
+        * _Simulator_ for Magic Pod cloud service.
+        * _Real Device_ for Remote TestKit.
+      is_required: true
+      is_expand: true
   - version: "12.1"
     opts:
-      title: "version"
+      title: "Version"
       description: |-
         Currently you can select only 
-        * "12.1" for Magic Pod cloud service.
+
+        * _12.1_ for Magic Pod cloud service.
       is_required: true
+      is_expand: true
   - model: "iPhone 8"
     opts:
-      title: "model"
+      title: "Model"
       description: |-
         Currently you can select only
-        * "iPhone 8" for Magic Pod cloud service.
+
+        * _iPhone 8_ for Magic Pod cloud service.
       is_required: true
+      is_expand: true
   - target_type: "App file (cloud upload)"
     opts:
-      title: "app type"
+      title: "App type"
       description: |-
         Specify how you submit your app to the cloud.
 
-        * When you select "App file (cloud upload)", then fill in "app path" field below.
-        * When you select "App file (URL)", then fill in "app URL" field below.
-        * When you select "Installed", then fill in "bundle ID" field for iOS, or "app package" and "app activity" for Android.
+        * When you select _App file (cloud upload)_, then fill in _App path_ field below.
+        * When you select _App file (URL)_, then fill in _App URL_ field below.
+        * When you select _Installed app_, then fill in _Bundle ID_ field for iOS, or _App package_ and _App activity_ for Android.
       is_required: true
+      is_expand: true
       value_options:
         - "App file (cloud upload)"
         - "App file (URL)"
-        - "Installed"
-  - app_path: "" #TODO
+        - "Installed app"
+  - app_path: "$BITRISE_APP_DIR_PATH"
     opts:
-      title: "app path"
+      title: "App path"
       description: |-
-        Required when you have selected "App file (cloud upload)" for app type.
+        Required when you have selected _App file (cloud upload)_ for _App type_.
         
-        [NOTE] The file of the specified path is uploaded to Magic Pod cloud and can be seen by project members.
-  - app_url: "" TODO
+        * *Warning: The file of the specified path is uploaded to Magic Pod cloud and can be seen by project members.*
+        * For iOS simulator testing, specify the directory _xx.app_ so that included files are automatically ziped into one file before uploading. 
+      is_expand: true
+  - app_url:
     opts:
-      title: "app URL"
+      title: "App URL"
       description: |-
-        Required when you have selected "App file (URL)" for app type.
-  - bundle_id: "com.apple.Preferences"
+        Required when you have selected _App file (URL)_ for _App type_.
+      is_expand: true
+  - bundle_id: 
     opts:
-      title: "bundle ID"
+      title: "Bundle ID"
       description : |-
-        Required when you have selected "iOS" for OS and "Installed" for app type.
-  - app_package: "com.android.settings"
+        Required when you have selected _iOS_ for _OS_ and _Installed_ for _App type_.
+
+        * ex) `com.apple.Preferences`
+      is_expand: true
+  - app_package: 
     opts:
-      title: "app Package"
-      description : |-
-        Required when you have selected "Android" for OS and "Installed" for app type.
-  - app_activity: ".Settings"
+      title: "App package"
+      description: |-
+        Required when you have selected _Android_ for _OS_ and _Installed_ for _App type_.
+
+        * ex) `com.android.settings`
+      is_expand: true
+  - app_activity: 
     opts:
-      title: "app Activity"
-      description : |-
-        Required when you have selected "Android" for OS and "Installed" for app type.
+      title: "App activity"
+      description: |-
+        Required when you have selected _Android_ for _OS_ and _Installed_ for _App type_.
+
+        * ex) `.Settings`
+      is_expand: true
   - capture_type: "Failure capture only"
     opts:
-      title: "capture type"
+      title: "Capture type"
       is_required: true
       description: |-
         Specify how often you want to save captures of your app screen.
@@ -140,14 +162,17 @@ inputs:
         - "Failure capture only"
         - "Every UI transit"
         - "Every step"
+      is_expand: true
   - device_language: "English"
     opts:
-      title: "device language"
+      title: "Device language"
+      is_expand: true
   - multi_lang_data:
     opts:
-      title: "Multi-lang Data Pattern"
+      title: "Multi-lang data pattern"
       description: |-
-        Required when you have Multi-lang data pattern for the project.
+        Required when you have Multi-lang data patterns for the project.
+      is_expand: true
 
 outputs:
   - EXAMPLE_STEP_OUTPUT:
