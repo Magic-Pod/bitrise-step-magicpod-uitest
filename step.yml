@@ -29,14 +29,9 @@ host_os_tags:
 # You can find more information about project type tags in the Step Development Guideline:
 # https://github.com/bitrise-io/bitrise/blob/master/_docs/step-development-guideline.md
 #
-# project_type_tags:
-#   - ios
-#   - macos
-#   - android
-#   - xamarin
-#   - react-native
-#   - cordova
-#   - ionic
+project_type_tags:
+  - ios
+  - android
 
 # Type tags are used for categorizing steps, for easier step discovery in Step Libraries.
 # You can find more information about type tags in the Step Development Guideline:
@@ -44,19 +39,10 @@ host_os_tags:
 type_tags:
   - test
 
-is_requires_admin_user: true
+is_requires_admin_user: false
 is_always_run: false
 is_skippable: false
 run_if: ""
-
-deps:
-  brew:
-  - name: git
-  - name: wget
-  apt_get:
-  - name: git
-  - name: wget
-
 
 toolkit:
   go:
@@ -64,17 +50,104 @@ toolkit:
 
 
 inputs:
-  - example_step_input: Default Value - you can leave this empty if you want to
+  - environment: "Magic Pod"
     opts:
-      title: "Example Step Input"
-      summary: Summary. No more than 2-3 sentences.
-      description: |
-        Description of this input.
-
-        Can be Markdown formatted text.
-      is_expand: true
+      title: "environment"
+      description: |-
+        Environment (cloud service) on which you want to execute your tests.
+        Each environment has its own limitation of OS/devices.  Please refer to project batch runs page for available choices.
+      value_options: ["Magic Pod", "Remote TestKit"]
       is_required: true
-      value_options: []
+      is_expand: false
+  - os: "iOS"
+    opts:
+      title: "OS"
+      description: |-
+        Currently you can select only 
+        * "iOS" for Magic Pod cloud service.
+        * "Android" for Remote TestKit.
+      is_required: true
+      value_options: ["iOS", "Android"]
+  - device_type: "Simulator"
+    opts:
+      title: "device type"
+      description: |-
+        Currently you can selet only
+        * "Simulator" for Magic Pod cloud service."
+        * "Real Device" for Remote TestKit.
+  - version: "12.1"
+    opts:
+      title: "version"
+      description: |-
+        Currently you can select only 
+        * "12.1" for Magic Pod cloud service.
+      is_required: true
+  - model: "iPhone 8"
+    opts:
+      title: "model"
+      description: |-
+        Currently you can select only
+        * "iPhone 8" for Magic Pod cloud service.
+      is_required: true
+  - target_type: "App file (cloud upload)"
+    opts:
+      title: "app type"
+      description: |-
+        Specify how you submit your app to the cloud.
+
+        * When you select "App file (cloud upload)", then fill in "app path" field below.
+        * When you select "App file (URL)", then fill in "app URL" field below.
+        * When you select "Installed", then fill in "bundle ID" field for iOS, or "app package" and "app activity" for Android.
+      is_required: true
+      value_options:
+        - "App file (cloud upload)"
+        - "App file (URL)"
+        - "Installed"
+  - app_path: "" #TODO
+    opts:
+      title: "app path"
+      description: |-
+        Required when you have selected "App file (cloud upload)" for app type.
+        
+        [NOTE] The file of the specified path is uploaded to Magic Pod cloud and can be seen by project members.
+  - app_url: "" TODO
+    opts:
+      title: "app URL"
+      description: |-
+        Required when you have selected "App file (URL)" for app type.
+  - bundle_id: "com.apple.Preferences"
+    opts:
+      title: "bundle ID"
+      description : |-
+        Required when you have selected "iOS" for OS and "Installed" for app type.
+  - app_package: "com.android.settings"
+    opts:
+      title: "app Package"
+      description : |-
+        Required when you have selected "Android" for OS and "Installed" for app type.
+  - app_activity: ".Settings"
+    opts:
+      title: "app Activity"
+      description : |-
+        Required when you have selected "Android" for OS and "Installed" for app type.
+  - capture_type: "Failure capture only"
+    opts:
+      title: "capture type"
+      is_required: true
+      description: |-
+        Specify how often you want to save captures of your app screen.
+      value_options:
+        - "Failure capture only"
+        - "Every UI transit"
+        - "Every step"
+  - device_language: "English"
+    opts:
+      title: "device language"
+  - multi_lang_data:
+    opts:
+      title: "Multi-lang Data Pattern"
+      description: |-
+        Required when you have Multi-lang data pattern for the project.
 
 outputs:
   - EXAMPLE_STEP_OUTPUT:
