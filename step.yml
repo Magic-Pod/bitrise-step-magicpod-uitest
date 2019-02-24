@@ -50,6 +50,32 @@ toolkit:
 
 
 inputs:
+  - magic_pod_api_token:
+    opts:
+      title: "Magic Pod API token"
+      description: |-
+        Access token to use Magic Pod Web API.
+        ### TODO
+        Please refer to https://magic-pod.com/xxxx for detail.
+      is_required: true
+      is_expand: true
+      is_sensitive: true
+  - organization_name:
+    opts:
+      title: "Organization name"
+      description : |-
+        Organization name in Magic Pod.
+        Please be sured to use **organization name**, not **display name**.
+      is_required: true
+      is_expand: true
+  - project_name:
+    opts:
+      title: "Project name"
+      description : |-
+        Project name in Magic Pod.
+        Please be sured to use **project name**, not **display name**.
+      is_required: true
+      is_expand: true
   - environment: "Magic Pod"
     opts:
       title: "Environment"
@@ -98,7 +124,7 @@ inputs:
         * _iPhone 8_ for Magic Pod cloud service.
       is_required: true
       is_expand: true
-  - target_type: "App file (cloud upload)"
+  - app_type: "App file (cloud upload)"
     opts:
       title: "App type"
       description: |-
@@ -163,9 +189,12 @@ inputs:
         - "Every UI transit"
         - "Every step"
       is_expand: true
-  - device_language: "English"
+  - device_language: "en"
     opts:
       title: "Device language"
+      value_options:
+        - "en"
+        - "ja"
       is_expand: true
   - multi_lang_data:
     opts:
@@ -175,11 +204,43 @@ inputs:
       is_expand: true
 
 outputs:
+  - MAGIC_POD_TEST_STATUS:
+    opts:
+      title: "MAGIC_POD_TEST_STATUS"
+      summary: Summary. No more than 2-3 sentences.
+      description: |-
+        Description of this output.
+
+        Can be Markdown formatted text.
+  - MAGIC_POD_TEST_PASSED_COUNT:
+    opts:
+      title: "MAGIC_POD_TEST_PASSED_COUNT"
+      summary: Summary. No more than 2-3 sentences.
+      description: |-
+        Description of this output.
+
+        Can be Markdown formatted text.
+  - MAGIC_POD_TEST_FAILED_COUNT:
+    opts:
+      title: "MAGIC_POD_TEST_FAILED_COUNT"
+      summary: Summary. No more than 2-3 sentences.
+      description: |-
+        Description of this output.
+
+        Can be Markdown formatted text.
+  - MAGIC_POD_TEST_TOTAL_COUNT:
+    opts:
+      title: "MAGIC_POD_TEST_TOTAL_COUNT"
+      summary: Summary. No more than 2-3 sentences.
+      description: |-
+        Description of this output.
+
+        Can be Markdown formatted text.
   - EXAMPLE_STEP_OUTPUT:
     opts:
       title: "Example Step Output"
       summary: Summary. No more than 2-3 sentences.
-      description: |
+      description: |-
         Description of this output.
 
         Can be Markdown formatted text.
