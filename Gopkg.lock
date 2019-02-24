@@ -22,12 +22,55 @@
   pruneopts = "UT"
   revision = "ec226b2359fcd806be64f0ad2217d8e741a1ff11"
 
+[[projects]]
+  branch = "master"
+  digest = "1:b6a3256ffb6ee9d7e7159c062f57e091c30c19e13ac3c676729baac7d83ecd21"
+  name = "golang.org/x/net"
+  packages = [
+    "idna",
+    "publicsuffix",
+  ]
+  pruneopts = "UT"
+  revision = "3a22650c66bd7f4fb6d1e8072ffd7b75c8a27898"
+
+[[projects]]
+  digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
+  name = "golang.org/x/text"
+  packages = [
+    "collate",
+    "collate/build",
+    "internal/colltab",
+    "internal/gen",
+    "internal/tag",
+    "internal/triegen",
+    "internal/ucd",
+    "language",
+    "secure/bidirule",
+    "transform",
+    "unicode/bidi",
+    "unicode/cldr",
+    "unicode/norm",
+    "unicode/rangetable",
+  ]
+  pruneopts = "UT"
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
+  version = "v0.3.0"
+
+[[projects]]
+  digest = "1:ce431d26276fb2227ae64ad2f7d980e8da9126c93979d9c83f413c36215e7031"
+  name = "gopkg.in/resty.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "03c09fa32a21b7b27b8dbb3877826c1ab3d2daa2"
+  version = "v1.11.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/bitrise-io/go-utils/log",
     "github.com/bitrise-tools/go-steputils/stepconf",
+    "gopkg.in/resty.v1",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
