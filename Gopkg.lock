@@ -3,12 +3,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:906b09e43bbd5141e38b265702d37cefbeeba9abd2e62b23b84c9a5539319043"
+  digest = "1:540197e862f6636ae91ab877d55ac9c44d3b147c407a5db134d3cbb5f8178c1e"
   name = "github.com/bitrise-io/go-utils"
   packages = [
     "colorstring",
+    "command",
+    "errorutil",
     "log",
     "parseutil",
+    "pathutil",
     "pointers",
   ]
   pruneopts = "UT"
@@ -16,11 +19,85 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:dacd83ec550d6d5c2ac83e57f20d45a25a39d79c73be4451771f92572a1f6344"
+  digest = "1:e875a94349b121ca6fa86bd72f7593f7f0e6f0d07a7d664f31fc000d80eaeec3"
   name = "github.com/bitrise-tools/go-steputils"
-  packages = ["stepconf"]
+  packages = [
+    "stepconf",
+    "tools",
+  ]
   pruneopts = "UT"
   revision = "ec226b2359fcd806be64f0ad2217d8e741a1ff11"
+
+[[projects]]
+  branch = "master"
+  digest = "1:988cfde37f089c50ba1ac8a1032c3f81d2ac0359e1872093b946a30139665eb6"
+  name = "github.com/dsnet/compress"
+  packages = [
+    ".",
+    "bzip2",
+    "bzip2/internal/sais",
+    "internal",
+    "internal/errors",
+    "internal/prefix",
+  ]
+  pruneopts = "UT"
+  revision = "cc9eb1d7ad760af14e8f918698f745e80377af4f"
+
+[[projects]]
+  digest = "1:e4f5819333ac698d294fe04dbf640f84719658d5c7ce195b10060cc37292ce79"
+  name = "github.com/golang/snappy"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "2a8bb927dd31d8daada140a5d09578521ce5c36a"
+  version = "v0.0.1"
+
+[[projects]]
+  digest = "1:67b3e2eb7a5bcfe8374b617315f1a8dfdff3c131a451eb2c01664790ef6dd4e6"
+  name = "github.com/mholt/archiver"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "d572b2e8b82726cee9476d1b9d63a7fe9b601ff1"
+  version = "v3.1.1"
+
+[[projects]]
+  digest = "1:b93a939355dc613ca1c23bf39f6d4c207da431a31dd8af001cc334ad24cab9d3"
+  name = "github.com/nwaples/rardecode"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cc3e4b2381762c56dbcdf9f93be03349a1dc1c14"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:d4c88b5ad20151a96c1e5a55547a944b6af623aa315f69ee0d172b00f95d27fb"
+  name = "github.com/pierrec/lz4"
+  packages = [
+    ".",
+    "internal/xxh32",
+  ]
+  pruneopts = "UT"
+  revision = "062282ea0dcff40c9fb8525789eef9644b1fbd6e"
+  version = "v2.1.0"
+
+[[projects]]
+  digest = "1:2643d81498e38e44bdcf480be199cac55f29e97403b0342d962824bfe9960722"
+  name = "github.com/ulikunitz/xz"
+  packages = [
+    ".",
+    "internal/hash",
+    "internal/xlog",
+    "lzma",
+  ]
+  pruneopts = "UT"
+  revision = "6f934d456d51e742b4eeab20d925a827ef22320a"
+  version = "v0.5.6"
+
+[[projects]]
+  branch = "master"
+  digest = "1:0dfba983988bcd90e6dd30b9bfdb9685ff530dbf61db3706e55372e975b1d8bc"
+  name = "github.com/xi2/xz"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "48954b6210f8d154cb5f8484d3a3e1f83489309e"
 
 [[projects]]
   branch = "master"
@@ -70,6 +147,8 @@
   input-imports = [
     "github.com/bitrise-io/go-utils/log",
     "github.com/bitrise-tools/go-steputils/stepconf",
+    "github.com/bitrise-tools/go-steputils/tools",
+    "github.com/mholt/archiver",
     "gopkg.in/resty.v1",
   ]
   solver-name = "gps-cdcl"
