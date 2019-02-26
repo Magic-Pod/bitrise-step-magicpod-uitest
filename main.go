@@ -18,23 +18,26 @@ const HostURL = "http://localhost:5000"
 
 // Config : Configuration for this step
 type Config struct {
-	APIToken         stepconf.Secret `env:"magic_pod_api_token,required"`
-	OrganizationName string          `env:"organization_name,required"`
-	ProjectName      string          `env:"project_name,required"`
-	Environment      string          `env:"environment,required"`
-	OsName           string          `env:"os,required"`
-	DeviceType       string          `env:"device_type,required"`
-	Version          string          `env:"version,required"`
-	Model            string          `env:"model,required"`
-	AppType          string          `env:"app_type,required"`
-	AppPath          string          `env:"app_path"`
-	AppURL           string          `env:"app_url"`
-	BundleID         string          `env:"bundle_id"`
-	AppPackage       string          `env:"app_package"`
-	AppActivity      string          `env:"app_activity"`
-	CaptureType      string          `env:"capture_type,required"`
-	DeviceLanguage   string          `env:"device_language"`
-	MultiLangData    string          `env:"multi_lang_data"`
+	APIToken             stepconf.Secret `env:"magic_pod_api_token,required"`
+	OrganizationName     string          `env:"organization_name,required"`
+	ProjectName          string          `env:"project_name,required"`
+	Environment          string          `env:"environment,required"`
+	ExternalServiceToken stepconf.Secret `env:"external_service_token"`
+	OsName               string          `env:"os,required"`
+	DeviceType           string          `env:"device_type,required"`
+	Version              string          `env:"version,required"`
+	Model                string          `env:"model,required"`
+	AppType              string          `env:"app_type,required"`
+	AppPath              string          `env:"app_path"`
+	AppURL               string          `env:"app_url"`
+	BundleID             string          `env:"bundle_id"`
+	AppPackage           string          `env:"app_package"`
+	AppActivity          string          `env:"app_activity"`
+	SendMail             string          `env:"send_mail"`
+	RetryCount           int             `env:"retry_count"`
+	CaptureType          string          `env:"capture_type,required"`
+	DeviceLanguage       string          `env:"device_language"`
+	MultiLangData        string          `env:"multi_lang_data"`
 }
 
 // UploadFile : Response from upload-file API
@@ -62,9 +65,7 @@ type BatchRun struct {
 
 // ErrorResponse : Response from APIs when they are not finished with status 200
 type ErrorResponse struct {
-	Status int    `json:"status"`
 	Detail string `json:"detail"`
-	Title  string `json:"title"`
 }
 
 func failf(format string, v ...interface{}) {
@@ -78,7 +79,7 @@ func handleError(resp *resty.Response, err error) {
 	}
 	if resp.StatusCode() != 200 {
 		errorResp := resp.Error().(*ErrorResponse)
-		failf("%s: %s", errorResp.Title, errorResp.Detail)
+		failf("%d: %s", resp.Status(), errorResp.Detail)
 	}
 }
 
@@ -144,6 +145,9 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 	params := map[string]interface{}{}
 
 	params["environment"] = cfg.Environment
+	if cfg.Environment != "magic_pod" {
+		params["external_service_token"] = cfg.ExternalServiceToken
+	}
 	params["os"] = cfg.OsName
 	params["device_type"] = cfg.DeviceType
 	params["version"] = cfg.Version
@@ -165,6 +169,8 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 		}
 		break
 	}
+	params["send_mail"] = cfg.SendMail
+	params["retry_count"] = cfg.RetryCount
 	params["capture_type"] = cfg.CaptureType
 	params["device_language"] = cfg.DeviceLanguage
 	params["shared_data_pattern_rows"] = map[string]string{"multi_lang_data": cfg.MultiLangData}
@@ -244,6 +250,9 @@ func main() {
 
 	if err := os.Unsetenv("magic_pod_api_token"); err != nil {
 		failf("Failed to remove API key data from envs, error: %s", err)
+	}
+	if err := os.Unsetenv("external_cloud_token"); err != nil {
+		failf("Failed to remove external service API key data from envs, error: %s", err)
 	}
 
 	// Upload app file if necessary
