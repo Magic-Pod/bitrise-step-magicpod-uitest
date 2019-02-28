@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-tools/go-steputils/stepconf"
@@ -13,11 +15,9 @@ import (
 	"gopkg.in/resty.v1"
 )
 
-// HostURL : Base URL of Magic Pod API
-const HostURL = "http://localhost:5000"
-
 // Config : Configuration for this step
 type Config struct {
+	BaseURL              string          `env:"base_url,required"`
 	APIToken             stepconf.Secret `env:"magic_pod_api_token,required"`
 	OrganizationName     string          `env:"organization_name,required"`
 	ProjectName          string          `env:"project_name,required"`
@@ -38,6 +38,7 @@ type Config struct {
 	CaptureType          string          `env:"capture_type,required"`
 	DeviceLanguage       string          `env:"device_language"`
 	MultiLangData        string          `env:"multi_lang_data"`
+	MaxWaitTime          int             `env:"max_wait_time"`
 }
 
 // UploadFile : Response from upload-file API
@@ -48,9 +49,9 @@ type UploadFile struct {
 
 // TestCases : Part of response from batch-run API. It stands for number of test cases
 type TestCases struct {
-	Passed int `json:"passed"`
-	Failed int `json:"failed"`
-	Total  int `json:"total"`
+	Succeeded int `json:"succeeded"`
+	Failed    int `json:"failed"`
+	Total     int `json:"total"`
 }
 
 // BatchRun : Response from batch-run API
@@ -79,16 +80,32 @@ func handleError(resp *resty.Response, err error) {
 	}
 	if resp.StatusCode() != 200 {
 		errorResp := resp.Error().(*ErrorResponse)
-		failf("%d: %s", resp.Status(), errorResp.Detail)
+		failf("%s: %s", resp.Status(), errorResp.Detail)
 	}
 }
 
-func (cfg *Config) convertToAPIParams() {
-	cfg.Environment = convertEnvironmentParam(cfg.Environment)
+func (cfg *Config) convertToAPIParams() []error {
+	var err error
+	errors := []error{}
+	cfg.Environment, err = convertEnvironmentParam(cfg.Environment)
+	if err != nil {
+		errors = append(errors, err)
+	}
 	cfg.OsName = convertToSnakeCase(cfg.OsName)
 	cfg.DeviceType = convertToSnakeCase(cfg.DeviceType)
-	cfg.AppType = convertAppTypeParam(cfg.AppType)
-	cfg.CaptureType = convertCaptureTypeParam(cfg.CaptureType)
+	cfg.AppType, err = convertAppTypeParam(cfg.AppType)
+	if err != nil {
+		errors = append(errors, err)
+	}
+	cfg.CaptureType, err = convertCaptureTypeParam(cfg.CaptureType)
+	if err != nil {
+		errors = append(errors, err)
+	}
+	cfg.DeviceLanguage, err = convertDeviceLanguageParam(cfg.DeviceLanguage)
+	if err != nil {
+		errors = append(errors, err)
+	}
+	return errors
 }
 
 func convertToSnakeCase(input string) string {
@@ -98,46 +115,51 @@ func convertToSnakeCase(input string) string {
 	return converted
 }
 
-func convertEnvironmentParam(input string) string {
+func convertEnvironmentParam(input string) (string, error) {
 	switch input {
 	case "Magic Pod":
-		return "magic_pod"
+		return "magic_pod", nil
 	case "Remote TestKit":
-		return "remote_testkit"
+		return "remote_testkit", nil
 	default:
-		failf("Failed to convert Environment %s", input)
-		// cannot reach here
-		panic("Failed to convert Environment")
+		return "", errors.New("Environment should be 'Magic Pod' or 'Remote TestKit'")
 	}
 }
 
-func convertAppTypeParam(input string) string {
+func convertAppTypeParam(input string) (string, error) {
 	switch input {
 	case "App file (cloud upload)":
-		return "app_file"
+		return "app_file", nil
 	case "App file (URL)":
-		return "app_url"
+		return "app_url", nil
 	case "Installed app":
-		return "installed"
+		return "installed", nil
 	default:
-		failf("Failed to convert App type %s", input)
-		// cannot reach here
-		panic("Failed to convert App type")
+		return "", errors.New("App type should be either of 'App file (cloud upload)', 'App file (URL)', or 'Installed app'")
 	}
 }
 
-func convertCaptureTypeParam(input string) string {
+func convertCaptureTypeParam(input string) (string, error) {
 	switch input {
 	case "Failure capture only":
-		return "on_error"
+		return "on_error", nil
 	case "Every UI transit":
-		return "on_ui_transit"
+		return "on_ui_transit", nil
 	case "Every step":
-		return "on_each_step"
+		return "on_each_step", nil
 	default:
-		failf("Failed to convert Capture type %s", input)
-		// cannot reach here
-		panic("Failed to convert Capture type")
+		return "", errors.New("Capture type should be either of 'Failure capture only', 'Every UI transit', or 'Every step'")
+	}
+}
+
+func convertDeviceLanguageParam(input string) (string, error) {
+	switch input {
+	case "English":
+		return "en", nil
+	case "Japanese":
+		return "ja", nil
+	default:
+		return "", errors.New("Device language should be 'English' or 'Japanese'")
 	}
 }
 
@@ -180,7 +202,7 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 
 func createBaseRequest(cfg Config) *resty.Request {
 	return resty.
-		SetHostURL(HostURL).R().
+		SetHostURL(cfg.BaseURL).R().
 		SetHeader("Authorization", "Token "+string(cfg.APIToken)).
 		SetPathParams(map[string]string{
 			"organization_name": cfg.OrganizationName,
@@ -192,7 +214,7 @@ func createBaseRequest(cfg Config) *resty.Request {
 func zipAppDir(dirPath string) string {
 	log.Infof("Zip app directory %s", dirPath)
 	zipPath := dirPath + ".zip"
-	if err := os.Remove(zipPath); err != nil {
+	if err := os.RemoveAll(zipPath); err != nil {
 		failf(err.Error())
 	}
 	if err := archiver.Archive([]string{dirPath}, zipPath); err != nil {
@@ -230,20 +252,25 @@ func getBatchRun(cfg Config, batchRunNumber int) *BatchRun {
 			"batch_run_number": strconv.Itoa(batchRunNumber),
 		}).
 		SetResult(BatchRun{}).
-		Get("/{organization_name}/{project_name}/batch-run/{batch_run_number}")
+		Get("/{organization_name}/{project_name}/batch-run/{batch_run_number}/")
 	handleError(resp, err)
 	return resp.Result().(*BatchRun)
 }
 
 func main() {
 
-	// Display configuration
+	// Parse configuration
 	var cfg Config
 	if err := stepconf.Parse(&cfg); err != nil {
-		failf("Issue with input: %s", err)
+		failf(err.Error())
 	}
-	// TODO error handling
-	cfg.convertToAPIParams()
+	enumErr := cfg.convertToAPIParams()
+	if len(enumErr) != 0 {
+		for i := range enumErr {
+			log.Errorf("- %s", enumErr[i].Error())
+		}
+		os.Exit(1)
+	}
 
 	stepconf.Print(cfg)
 	fmt.Println()
@@ -263,29 +290,36 @@ func main() {
 
 	// Post request to start batch run
 	batchRunNumber := startBatchRun(cfg, appFileNumber)
-	log.Infof("batch run number = %d", batchRunNumber)
 
 	// Wait for test finished
 	// var batchRun = BatchRun{}
 	batchRun := &BatchRun{}
+	log.Infof("Waiting for the test result ...")
+	passedTime := 0
 	for {
 		batchRun = getBatchRun(cfg, batchRunNumber)
-		// TODO avoid infinite loop
-		if batchRun.Status != "running" {
+		print(".")
+		if passedTime >= 60*cfg.MaxWaitTime {
+			println()
+			log.Errorf("Max waiting time has passed.  This step is marked as failure")
+			break
+		} else if batchRun.Status != "running" {
 			break
 		}
+		time.Sleep(15 * time.Second)
+		passedTime += 15
 	}
 
 	// Show result
 	testCases := batchRun.TestCases
 	message := fmt.Sprintf("Magic Pod test %s: \n"+
-		"\tPassed : %d\n"+
+		"\tSucceeded : %d\n"+
 		"\tFailed : %d\n"+
 		"\tTotal : %d\n"+
 		"Please see %s for detail",
-		batchRun.Status, testCases.Passed, testCases.Failed, testCases.Total, batchRun.URL)
+		batchRun.Status, testCases.Succeeded, testCases.Failed, testCases.Total, batchRun.URL)
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_STATUS", batchRun.Status)
-	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_PASSED_COUNT", strconv.Itoa(testCases.Passed))
+	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_SUCCEEDED_COUNT", strconv.Itoa(testCases.Succeeded))
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_FAILED_COUNT", strconv.Itoa(testCases.Failed))
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_TOTAL_COUNT", strconv.Itoa(testCases.Total))
 	switch batchRun.Status {

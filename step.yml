@@ -207,24 +207,45 @@ inputs:
       is_required: true
       description: |-
         Specify how often you want to save captures of your app screen.
+
+        _Every step_ is only for enterprise users.
       value_options:
         - "Failure capture only"
         - "Every UI transit"
         - "Every step"
       is_expand: true
-  - device_language: "en"
+      category: "detail"
+  - device_language: "English"
     opts:
       title: "Device language"
       value_options:
-        - "en"
-        - "ja"
+        - "English"
+        - "Japanese"
       is_expand: true
+      category: "detail"
   - multi_lang_data:
     opts:
       title: "Multi-lang data pattern"
       description: |-
         Required when you have Multi-lang data patterns for the project.
+        This feature is only for enterprise users.
       is_expand: true
+      category: "detail"
+  - max_wait_time: 30
+    opts:
+      title: "Max waiting time"
+      description: |-
+        Max waiting time in minutes when your test keeps running for a long time.
+        When exceeds the specified time, the step is marked as failed.
+      category: "detail"
+  - base_url: "https://magic-pod.com/api/v1.0"
+    opts:
+      title: "Magid Pod web API URL"
+      description: |-
+        Cannot be changed
+      is_dont_change_value: true
+      category: "debug"
+
 
 outputs:
   - MAGIC_POD_TEST_STATUS:
