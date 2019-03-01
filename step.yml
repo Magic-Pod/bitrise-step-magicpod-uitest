@@ -201,6 +201,7 @@ inputs:
       description: |-
         Each test in the project is executed at most the specified number of times when it failed.
         Please set to 0 for no retry.
+      category: "detail"
   - capture_type: "Failure capture only"
     opts:
       title: "Capture type"
