@@ -9,7 +9,7 @@ app:
   - BASE_URL: $BASE_URL
   # If you want to share this step into a StepLib
   - BITRISE_STEP_ID: magicpod-uitest
-  - BITRISE_STEP_VERSION: "0.0.1"
+  - BITRISE_STEP_VERSION: "0.1.0"
   - BITRISE_STEP_GIT_CLONE_URL: https://github.com/magic-Pod/bitrise-step-magicpod-uitest.git
   - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
 
@@ -18,7 +18,6 @@ workflows:
     steps:
     - go-list:
     - golint:
-    - go-test:
     - change-workdir:
         title: Switch working dir to test / _tmp dir
         description: |-
@@ -47,7 +46,7 @@ workflows:
         - capture_type: "Every UI transit"
         - device_language: "English"
         - multi_lang_data: "English"
-        - max_wait_time: 1
+        - max_wait_time: 30
         - base_url: $BASE_URL
     - script:
         inputs:

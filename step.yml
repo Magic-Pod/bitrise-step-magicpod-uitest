@@ -8,7 +8,7 @@
 # - Bitrise CLI guides: http://devcenter.bitrise.io/bitrise-cli/
 
 title: |-
-  magicpod-uitest
+  Magic Pod UI test
 summary: |
   Magic Pod UI test step
 description: |
@@ -55,8 +55,8 @@ inputs:
       title: "Magic Pod API token"
       description: |-
         Access token to use Magic Pod Web API.
-        ### TODO
-        Please refer to https://magic-pod.com/xxxx for detail.
+        
+        Please refer to https://magic-pod.com/accounts/api-token/ for detail.
       is_required: true
       is_expand: true
       is_sensitive: true
@@ -90,7 +90,7 @@ inputs:
       title: "External service token"
       description: |-
         Access token to use external cloud services (ex. Remote TestKit) for testing.
-        Required when you have selected other than _Magic Pod_ for _Environment_.
+        Required when you have selected **other than Magic Pod** for _Environment_.
       is_expand: true
       is_sensitive: true
   - os: "iOS"
@@ -238,7 +238,7 @@ inputs:
         Max waiting time in minutes when your test keeps running for a long time.
         When exceeds the specified time, the step is marked as failed.
       category: "detail"
-  - base_url: "https://magic-pod.com/api/v1.0"
+  - base_url: "http:/magic-pod.com/api/v1.0/"
     opts:
       title: "Magid Pod web API URL"
       description: |-
@@ -251,40 +251,20 @@ outputs:
   - MAGIC_POD_TEST_STATUS:
     opts:
       title: "MAGIC_POD_TEST_STATUS"
-      summary: Summary. No more than 2-3 sentences.
-      description: |-
-        Description of this output.
-
-        Can be Markdown formatted text.
+      summary: |-
+        Status of batch test run. The value is either of 'succeeded', 'failed', 'aborted', 'running'.
   - MAGIC_POD_TEST_PASSED_COUNT:
     opts:
       title: "MAGIC_POD_TEST_PASSED_COUNT"
-      summary: Summary. No more than 2-3 sentences.
-      description: |-
-        Description of this output.
-
-        Can be Markdown formatted text.
+      summary: |-
+        The number of succeeded test cases in the batch run.
   - MAGIC_POD_TEST_FAILED_COUNT:
     opts:
       title: "MAGIC_POD_TEST_FAILED_COUNT"
-      summary: Summary. No more than 2-3 sentences.
-      description: |-
-        Description of this output.
-
-        Can be Markdown formatted text.
+      summary: |-
+        The number of failed test cases in the batch run.
   - MAGIC_POD_TEST_TOTAL_COUNT:
     opts:
       title: "MAGIC_POD_TEST_TOTAL_COUNT"
-      summary: Summary. No more than 2-3 sentences.
-      description: |-
-        Description of this output.
-
-        Can be Markdown formatted text.
-  - EXAMPLE_STEP_OUTPUT:
-    opts:
-      title: "Example Step Output"
-      summary: Summary. No more than 2-3 sentences.
-      description: |-
-        Description of this output.
-
-        Can be Markdown formatted text.
+      summary: |-
+        The number of total test cases in the batch run.

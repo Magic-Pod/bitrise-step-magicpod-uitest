@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -66,7 +67,8 @@ type BatchRun struct {
 
 // ErrorResponse : Response from APIs when they are not finished with status 200
 type ErrorResponse struct {
-	Detail string `json:"detail"`
+	Detail   string                 `json:"detail"`
+	ErrorMap map[string]interface{} `json:"."`
 }
 
 func failf(format string, v ...interface{}) {
@@ -80,7 +82,19 @@ func handleError(resp *resty.Response, err error) {
 	}
 	if resp.StatusCode() != 200 {
 		errorResp := resp.Error().(*ErrorResponse)
-		failf("%s: %s", resp.Status(), errorResp.Detail)
+		if errorResp.Detail != "" {
+			failf("%s: %s", resp.Status(), errorResp.Detail)
+		} else {
+			var result map[string][]string
+			if err := json.Unmarshal([]byte(resp.String()), &result); err != nil {
+				failf(err.Error())
+			}
+			log.Errorf("%s:", resp.Status())
+			for key, value := range result {
+				log.Errorf("\t%s: %s", key, strings.Join(value, ","))
+			}
+			os.Exit(1)
+		}
 	}
 }
 
@@ -195,7 +209,7 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 	params["retry_count"] = cfg.RetryCount
 	params["capture_type"] = cfg.CaptureType
 	params["device_language"] = cfg.DeviceLanguage
-	params["shared_data_pattern_rows"] = map[string]string{"multi_lang_data": cfg.MultiLangData}
+	params["shared_data_pattern"] = map[string]string{"multi_lang_data": cfg.MultiLangData}
 
 	return params
 }
@@ -220,6 +234,7 @@ func zipAppDir(dirPath string) string {
 	if err := archiver.Archive([]string{dirPath}, zipPath); err != nil {
 		failf(err.Error())
 	}
+	fmt.Println()
 	return zipPath
 }
 
@@ -228,22 +243,29 @@ func uploadAppFile(cfg Config) int {
 	if cfg.OsName == "ios" && cfg.DeviceType == "simulator" {
 		appPath = zipAppDir(appPath)
 	}
+	log.Infof("Upload app file %s to Magic Pod cloud", appPath)
 
 	resp, err := createBaseRequest(cfg).
 		SetFile("file", appPath).
 		SetResult(UploadFile{}).
 		Post("/{organization_name}/{project_name}/upload-file/")
 	handleError(resp, err)
-	return resp.Result().(*UploadFile).FileNo
+	fileNo := resp.Result().(*UploadFile).FileNo
+	log.Donef("Done. File number = %d\n", fileNo)
+	return fileNo
 }
 
 func startBatchRun(cfg Config, appFileNumber int) int {
+	log.Infof("Start batch run")
 	resp, err := createBaseRequest(cfg).
 		SetResult(BatchRun{}).
 		SetBody(createStartBatchRunParams(cfg, appFileNumber)).
 		Post("/{organization_name}/{project_name}/batch-run/")
 	handleError(resp, err)
-	return resp.Result().(*BatchRun).BatchRunNumber
+	batchRun := resp.Result().(*BatchRun)
+	log.Donef("Batch run #%d has started. You can check detail progress on %s\n",
+		batchRun.BatchRunNumber, batchRun.URL)
+	return batchRun.BatchRunNumber
 }
 
 func getBatchRun(cfg Config, batchRunNumber int) *BatchRun {
@@ -292,7 +314,6 @@ func main() {
 	batchRunNumber := startBatchRun(cfg, appFileNumber)
 
 	// Wait for test finished
-	// var batchRun = BatchRun{}
 	batchRun := &BatchRun{}
 	log.Infof("Waiting for the test result ...")
 	passedTime := 0
@@ -312,7 +333,7 @@ func main() {
 
 	// Show result
 	testCases := batchRun.TestCases
-	message := fmt.Sprintf("Magic Pod test %s: \n"+
+	message := fmt.Sprintf("\nMagic Pod test %s: \n"+
 		"\tSucceeded : %d\n"+
 		"\tFailed : %d\n"+
 		"\tTotal : %d\n"+
@@ -324,11 +345,10 @@ func main() {
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_TOTAL_COUNT", strconv.Itoa(testCases.Total))
 	switch batchRun.Status {
 	case "succeeded":
-		log.Infof(message)
+		log.Successf(message)
 	default:
 		failf(message)
 	}
 
-	log.Donef("Test succeeded")
 	os.Exit(0)
 }
