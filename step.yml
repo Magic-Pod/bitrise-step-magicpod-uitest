@@ -238,7 +238,7 @@ inputs:
         Max waiting time in minutes when your test keeps running for a long time.
         When exceeds the specified time, the step is marked as failed.
       category: "detail"
-  - base_url: "http:/magic-pod.com/api/v1.0/"
+  - base_url: "https:/magic-pod.com/api/v1.0/"
     opts:
       title: "Magid Pod web API URL"
       description: |-
