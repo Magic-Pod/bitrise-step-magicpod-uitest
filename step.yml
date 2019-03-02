@@ -16,9 +16,6 @@ description: |
 website: https://github.com/magic-Pod/bitrise-step-magicpod-uitest
 source_code_url: https://github.com/magic-Pod/bitrise-step-magicpod-uitest
 support_url: https://github.com/magic-Pod/bitrise-step-magicpod-uitest/issues
-host_os_tags:
-  - osx-10.10
-  - ubuntu-16.04
 
 # If this step should be available only for certain project types
 # just uncomment this `project_type_tags` section and include all the
@@ -186,6 +183,12 @@ inputs:
 
         * ex) `.Settings`
       is_expand: true
+  - wait_for_result: "true"
+    opts:
+      title: "Wait for result"
+      description: |-
+        If set to true, this step waits until Magic Pod testing is completed and succeeds only when the test is successful.
+        Otherwise this step immediately exits with success.
   - send_mail: "true"
     opts:
       title: "Send mail"
@@ -232,13 +235,6 @@ inputs:
         This feature is only for enterprise users.
       is_expand: true
       category: "detail"
-  - max_wait_time: 30
-    opts:
-      title: "Max waiting time"
-      description: |-
-        Max waiting time in minutes when your test keeps running for a long time.
-        When exceeds the specified time, the step is marked as failed.
-      category: "detail"
   - base_url: "https:/magic-pod.com/api/v1.0/"
     opts:
       title: "Magid Pod web API URL"
@@ -269,3 +265,8 @@ outputs:
       title: "MAGIC_POD_TEST_TOTAL_COUNT"
       summary: |-
         The number of total test cases in the batch run.
+  - MAGIC_POD_TEST_URL:
+    opts:
+      title: "MAGIC_POD_TEST_URL"
+      summary: |-
+        URL of Magic Pod batch run page

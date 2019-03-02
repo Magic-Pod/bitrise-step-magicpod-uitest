@@ -34,12 +34,12 @@ type Config struct {
 	BundleID             string          `env:"bundle_id"`
 	AppPackage           string          `env:"app_package"`
 	AppActivity          string          `env:"app_activity"`
+	WaitForResult        bool            `env:"wait_for_result"`
 	SendMail             string          `env:"send_mail"`
 	RetryCount           int             `env:"retry_count"`
 	CaptureType          string          `env:"capture_type,required"`
 	DeviceLanguage       string          `env:"device_language"`
 	MultiLangData        string          `env:"multi_lang_data"`
-	MaxWaitTime          int             `env:"max_wait_time"`
 }
 
 // UploadFile : Response from upload-file API
@@ -255,7 +255,7 @@ func uploadAppFile(cfg Config) int {
 	return fileNo
 }
 
-func startBatchRun(cfg Config, appFileNumber int) int {
+func startBatchRun(cfg Config, appFileNumber int) *BatchRun {
 	log.Infof("Start batch run")
 	resp, err := createBaseRequest(cfg).
 		SetResult(BatchRun{}).
@@ -265,7 +265,7 @@ func startBatchRun(cfg Config, appFileNumber int) int {
 	batchRun := resp.Result().(*BatchRun)
 	log.Donef("Batch run #%d has started. You can check detail progress on %s\n",
 		batchRun.BatchRunNumber, batchRun.URL)
-	return batchRun.BatchRunNumber
+	return batchRun
 }
 
 func getBatchRun(cfg Config, batchRunNumber int) *BatchRun {
@@ -311,20 +311,22 @@ func main() {
 	}
 
 	// Post request to start batch run
-	batchRunNumber := startBatchRun(cfg, appFileNumber)
+	batchRun := startBatchRun(cfg, appFileNumber)
+	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_URL", batchRun.URL)
+
+	if !cfg.WaitForResult {
+		log.Successf("Exit this step because 'Wait for result' is set to false")
+		os.Exit(0)
+	}
 
 	// Wait for test finished
-	batchRun := &BatchRun{}
 	log.Infof("Waiting for the test result ...")
 	passedTime := 0
+	batchRunNumber := batchRun.BatchRunNumber
 	for {
 		batchRun = getBatchRun(cfg, batchRunNumber)
 		print(".")
-		if passedTime >= 60*cfg.MaxWaitTime {
-			println()
-			log.Errorf("Max waiting time has passed.  This step is marked as failure")
-			break
-		} else if batchRun.Status != "running" {
+		if batchRun.Status != "running" {
 			break
 		}
 		time.Sleep(15 * time.Second)
