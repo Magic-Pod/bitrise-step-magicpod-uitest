@@ -105,12 +105,16 @@ inputs:
     opts:
       title: "Device type"
       description: |-
-        Currently you can selet only
+        Currently you can select only
 
         * _Simulator_ for Magic Pod cloud service.
         * _Real Device_ for Remote TestKit.
       is_required: true
       is_expand: true
+      value_options:
+        - "Simulator"
+        - "Emulator"
+        - "Real Device"
   - version: "12.1"
     opts:
       title: "Version"
@@ -127,6 +131,7 @@ inputs:
         Currently you can select only
 
         * _iPhone 8_ for Magic Pod cloud service.
+        * For Remote TestKit, please refer to model list on https://appkitbox.com/testkit/devicelist/.
       is_required: true
       is_expand: true
   - app_type: "App file (cloud upload)"
