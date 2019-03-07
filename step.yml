@@ -202,7 +202,7 @@ inputs:
       value_options:
         - "true"
         - "false"
-      required: true
+      is_required: true
   - retry_count: "0"
     opts:
       title: "Retry count"
