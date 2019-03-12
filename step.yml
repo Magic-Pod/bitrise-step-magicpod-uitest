@@ -52,8 +52,8 @@ inputs:
       title: "Magic Pod API token"
       description: |-
         Access token to use Magic Pod Web API.
-        
-        Please refer to https://magic-pod.com/accounts/api-token/ for detail.
+        Key: Arbitrary new Secret Env name like MAGIC_POD_API_TOKEN
+        Value: API token copied from https://magic-pod.com/accounts/api-token/. 
       is_required: true
       is_expand: true
       is_sensitive: true
@@ -210,18 +210,16 @@ inputs:
         Each test in the project is executed at most the specified number of times when it failed.
         Please set to 0 for no retry.
       category: "detail"
-  - capture_type: "Failure capture only"
+  - capture_type: "Every step"
     opts:
       title: "Capture type"
       is_required: true
       description: |-
         Specify how often you want to save captures of your app screen.
-
-        _Every step_ is only for enterprise users.
       value_options:
-        - "Failure capture only"
-        - "Every UI transit"
         - "Every step"
+        - "Every UI transit"
+        - "Failure capture only"
       is_expand: true
       category: "detail"
   - device_language: "English"
@@ -240,9 +238,9 @@ inputs:
         This feature is only for enterprise users.
       is_expand: true
       category: "detail"
-  - base_url: "https:/magic-pod.com/api/v1.0/"
+  - base_url: "https://magic-pod.com/api/v1.0"
     opts:
-      title: "Magid Pod web API URL"
+      title: "Magic Pod web API URL"
       description: |-
         Cannot be changed
       is_dont_change_value: true

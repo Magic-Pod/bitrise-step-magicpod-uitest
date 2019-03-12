@@ -86,10 +86,11 @@ func handleError(resp *resty.Response, err error) {
 			failf("%s: %s", resp.Status(), errorResp.Detail)
 		} else {
 			var result map[string][]string
-			if err := json.Unmarshal([]byte(resp.String()), &result); err != nil {
-				failf(err.Error())
-			}
 			log.Errorf("%s:", resp.Status())
+			if err := json.Unmarshal([]byte(resp.String()), &result); err != nil {
+				// Unexpectedly returned HTML
+				os.Exit(1)
+			}
 			for key, value := range result {
 				log.Errorf("\t%s: %s", key, strings.Join(value, ","))
 			}
@@ -155,14 +156,14 @@ func convertAppTypeParam(input string) (string, error) {
 
 func convertCaptureTypeParam(input string) (string, error) {
 	switch input {
-	case "Failure capture only":
-		return "on_error", nil
-	case "Every UI transit":
-		return "on_ui_transit", nil
 	case "Every step":
 		return "on_each_step", nil
+	case "Every UI transit":
+		return "on_ui_transit", nil
+	case "Failure capture only":
+		return "on_error", nil
 	default:
-		return "", errors.New("Capture type should be either of 'Failure capture only', 'Every UI transit', or 'Every step'")
+		return "", errors.New("Capture type should be either of 'Every step', 'Every UI transit', or 'Failure capture only'")
 	}
 }
 
