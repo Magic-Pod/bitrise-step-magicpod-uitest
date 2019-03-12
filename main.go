@@ -78,7 +78,7 @@ func failf(format string, v ...interface{}) {
 
 func handleError(resp *resty.Response, err error) {
 	if err != nil {
-		failf(err.Error())
+                failf(resp.Status())
 	}
 	if resp.StatusCode() != 200 {
 		errorResp := resp.Error().(*ErrorResponse)
