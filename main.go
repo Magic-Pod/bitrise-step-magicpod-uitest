@@ -210,7 +210,9 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 	params["retry_count"] = cfg.RetryCount
 	params["capture_type"] = cfg.CaptureType
 	params["device_language"] = cfg.DeviceLanguage
-	params["shared_data_pattern"] = map[string]string{"multi_lang_data": cfg.MultiLangData}
+	if cfg.MultiLangData != "" {
+		params["shared_data_pattern"] = map[string]string{"multi_lang_data": cfg.MultiLangData}
+	}
 
 	return params
 }
