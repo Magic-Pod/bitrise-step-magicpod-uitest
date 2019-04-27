@@ -230,6 +230,33 @@ inputs:
         - "Japanese"
       is_expand: true
       category: "detail"
+  - device_region: "Default"
+    opts:
+      title: "Device region"
+      value_options:
+        - "Australia"
+        - "Brazil"
+        - "Canada"
+        - "China mainland"
+        - "France"
+        - "Germany"
+        - "India"
+        - "Indonesia"
+        - "Italy"
+        - "Japan"
+        - "Mexico"
+        - "Netherlands"
+        - "Russia"
+        - "Saudi Arabia"
+        - "South Korea"
+        - "Spain"
+        - "Switzerland"
+        - "Taiwan"
+        - "Turkey"
+        - "United Kingdom"
+        - "United States"
+      is_expand: true
+      category: "detail"
   - multi_lang_data:
     opts:
       title: "Multi-lang data pattern"
