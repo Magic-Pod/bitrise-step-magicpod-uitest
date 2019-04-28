@@ -234,6 +234,7 @@ inputs:
     opts:
       title: "Device region"
       value_options:
+        - "Default"
         - "Australia"
         - "Brazil"
         - "Canada"
