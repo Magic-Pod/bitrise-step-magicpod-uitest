@@ -39,6 +39,7 @@ type Config struct {
 	RetryCount           int             `env:"retry_count"`
 	CaptureType          string          `env:"capture_type,required"`
 	DeviceLanguage       string          `env:"device_language"`
+	DeviceRegion         string          `env:"device_region"`
 	MultiLangData        string          `env:"multi_lang_data"`
 }
 
@@ -120,6 +121,10 @@ func (cfg *Config) convertToAPIParams() []error {
 	if err != nil {
 		errors = append(errors, err)
 	}
+	cfg.DeviceRegion, err = convertDeviceRegionParam(cfg.DeviceRegion)
+	if err != nil {
+		errors = append(errors, err)
+	}
 	return errors
 }
 
@@ -178,6 +183,57 @@ func convertDeviceLanguageParam(input string) (string, error) {
 	}
 }
 
+func convertDeviceRegionParam(input string) (string, error) {
+	switch input {
+	case "Default":
+		return "Default", nil
+	case "Australia":
+		return "AU", nil
+	case "Brazil":
+		return "BR", nil
+	case "Canada":
+		return "CA", nil
+	case "China mainland":
+		return "CN", nil
+	case "France":
+		return "FR", nil
+	case "Germany":
+		return "DE", nil
+	case "India":
+		return "IN", nil
+	case "Indonesia":
+		return "ID", nil
+	case "Italy":
+		return "IT", nil
+	case "Japan":
+		return "JP", nil
+	case "Mexico":
+		return "MX", nil
+	case "Netherlands":
+		return "NL", nil
+	case "Russia":
+		return "RU", nil
+	case "Saudi Arabia":
+		return "SA", nil
+	case "South Korea":
+		return "KR", nil
+	case "Spain":
+		return "ES", nil
+	case "Switzerland":
+		return "CH", nil
+	case "Taiwan":
+		return "TW", nil
+	case "Turkey":
+		return "TR", nil
+	case "United Kingdom":
+		return "GB", nil
+	case "United States":
+		return "US", nil
+	default:
+		return "", errors.New("Invalid Device Region")
+	}
+}
+
 func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interface{} {
 	params := map[string]interface{}{}
 
@@ -210,6 +266,7 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 	params["retry_count"] = cfg.RetryCount
 	params["capture_type"] = cfg.CaptureType
 	params["device_language"] = cfg.DeviceLanguage
+	params["device_region"] = cfg.DeviceRegion
 	if cfg.MultiLangData != "" {
 		params["shared_data_pattern"] = map[string]string{"multi_lang_data": cfg.MultiLangData}
 	}
