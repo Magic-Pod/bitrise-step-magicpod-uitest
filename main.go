@@ -174,12 +174,14 @@ func convertCaptureTypeParam(input string) (string, error) {
 
 func convertDeviceLanguageParam(input string) (string, error) {
 	switch input {
+	case "Default":
+		return "default", nil
 	case "English":
 		return "en", nil
 	case "Japanese":
 		return "ja", nil
 	default:
-		return "", errors.New("Device language should be 'English' or 'Japanese'")
+		return "", errors.New("Device language should be 'Default', 'English' or 'Japanese'")
 	}
 }
 
