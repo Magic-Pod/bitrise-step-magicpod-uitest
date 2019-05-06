@@ -222,10 +222,11 @@ inputs:
         - "Failure capture only"
       is_expand: true
       category: "detail"
-  - device_language: "English"
+  - device_language: "Default"
     opts:
       title: "Device language"
       value_options:
+        - "Default"
         - "English"
         - "Japanese"
       is_expand: true
