@@ -103,6 +103,8 @@ func handleError(resp *resty.Response, err error) {
 	}
 }
 
+// Converts parameters for API call but also validates if any of parameters has a `unselectable` value from GUI(e.g. Okinawa dialect for `Device Language`).
+// We prefer not to validate parameters because it duplicates the API logic on server  
 func (cfg *Config) convertToAPIParams() []error {
 	var err error
 	errors := []error{}
