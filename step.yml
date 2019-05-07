@@ -98,7 +98,6 @@ inputs:
         Currently you can select only 
 
         * _iOS_ for Magic Pod cloud service.
-        * _Android_ for Remote TestKit.
       is_required: true
       value_options: ["iOS", "Android"]
       is_expand: true
