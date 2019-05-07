@@ -18,29 +18,32 @@ import (
 
 // Config : Configuration for this step
 type Config struct {
-	BaseURL              string          `env:"base_url,required"`
-	APIToken             stepconf.Secret `env:"magic_pod_api_token,required"`
-	OrganizationName     string          `env:"organization_name,required"`
-	ProjectName          string          `env:"project_name,required"`
-	Environment          string          `env:"environment,required"`
-	ExternalServiceToken stepconf.Secret `env:"external_service_token"`
-	OsName               string          `env:"os,required"`
-	DeviceType           string          `env:"device_type,required"`
-	Version              string          `env:"version,required"`
-	Model                string          `env:"model,required"`
-	AppType              string          `env:"app_type,required"`
-	AppPath              string          `env:"app_path"`
-	AppURL               string          `env:"app_url"`
-	BundleID             string          `env:"bundle_id"`
-	AppPackage           string          `env:"app_package"`
-	AppActivity          string          `env:"app_activity"`
-	WaitForResult        bool            `env:"wait_for_result"`
-	SendMail             string          `env:"send_mail"`
-	RetryCount           int             `env:"retry_count"`
-	CaptureType          string          `env:"capture_type,required"`
-	DeviceLanguage       string          `env:"device_language"`
-	DeviceRegion         string          `env:"device_region"`
-	MultiLangData        string          `env:"multi_lang_data"`
+	BaseURL                  string          `env:"base_url,required"`
+	APIToken                 stepconf.Secret `env:"magic_pod_api_token,required"`
+	OrganizationName         string          `env:"organization_name,required"`
+	ProjectName              string          `env:"project_name,required"`
+	Environment              string          `env:"environment,required"`
+	ExternalServiceToken     stepconf.Secret `env:"external_service_token"`
+	ExternalServiceServerURL string          `env:"external_service_server_url"`
+	ExternalServiceUserName  string          `env:"external_service_user_name"`
+	ExternalServicePassword  stepconf.Secret `env:"external_service_password"`
+	OsName                   string          `env:"os,required"`
+	DeviceType               string          `env:"device_type,required"`
+	Version                  string          `env:"version,required"`
+	Model                    string          `env:"model,required"`
+	AppType                  string          `env:"app_type,required"`
+	AppPath                  string          `env:"app_path"`
+	AppURL                   string          `env:"app_url"`
+	BundleID                 string          `env:"bundle_id"`
+	AppPackage               string          `env:"app_package"`
+	AppActivity              string          `env:"app_activity"`
+	WaitForResult            bool            `env:"wait_for_result"`
+	SendMail                 string          `env:"send_mail"`
+	RetryCount               int             `env:"retry_count"`
+	CaptureType              string          `env:"capture_type,required"`
+	DeviceLanguage           string          `env:"device_language"`
+	DeviceRegion             string          `env:"device_region"`
+	MultiLangData            string          `env:"multi_lang_data"`
 }
 
 // UploadFile : Response from upload-file API
@@ -100,6 +103,8 @@ func handleError(resp *resty.Response, err error) {
 	}
 }
 
+// Converts parameters for API call but also validates if any of parameters has a `unselectable` value from GUI(e.g. Okinawa dialect for `Device Language`).
+// We prefer not to validate parameters because it duplicates the API logic on server  
 func (cfg *Config) convertToAPIParams() []error {
 	var err error
 	errors := []error{}
@@ -141,8 +146,10 @@ func convertEnvironmentParam(input string) (string, error) {
 		return "magic_pod", nil
 	case "Remote TestKit":
 		return "remote_testkit", nil
+	case "Remote TestKit Onpremise":
+		return "remote_testkit_onpremise", nil
 	default:
-		return "", errors.New("Environment should be 'Magic Pod' or 'Remote TestKit'")
+		return "", errors.New("Environment should be 'Magic Pod', 'Remote TestKit' or 'Remote TestKit Onpremise'")
 	}
 }
 
@@ -240,8 +247,12 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 	params := map[string]interface{}{}
 
 	params["environment"] = cfg.Environment
-	if cfg.Environment != "magic_pod" {
+	if cfg.Environment == "remote_testkit" {
 		params["external_service_token"] = cfg.ExternalServiceToken
+	} else if cfg.Environment == "remote_testkit_onpremise" {
+		params["external_service_server_url"] = cfg.ExternalServiceServerURL
+    	params["external_service_user_name"] = cfg.ExternalServiceUserName
+		params["external_service_password"] = cfg.ExternalServicePassword
 	}
 	params["os"] = cfg.OsName
 	params["device_type"] = cfg.DeviceType
@@ -362,8 +373,11 @@ func main() {
 	if err := os.Unsetenv("magic_pod_api_token"); err != nil {
 		failf("Failed to remove API key data from envs, error: %s", err)
 	}
-	if err := os.Unsetenv("external_cloud_token"); err != nil {
+	if err := os.Unsetenv("external_service_token"); err != nil {
 		failf("Failed to remove external service API key data from envs, error: %s", err)
+	}
+	if err := os.Unsetenv("external_service_password"); err != nil {
+		failf("Failed to remove external service password key data from envs, error: %s", err)
 	}
 
 	// Upload app file if necessary
