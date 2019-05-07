@@ -80,7 +80,7 @@ inputs:
       description: |-
         Environment (cloud service) on which you want to execute your tests.
         Each environment has its own limitation of OS/devices.  Please refer to project batch runs page for available choices.
-      value_options: ["Magic Pod", "Remote TestKit"]
+      value_options: ["Magic Pod", "Remote TestKit", "Remote TestKit Onpremise"]
       is_required: true
       is_expand: true
   - external_service_token: 
@@ -88,9 +88,28 @@ inputs:
       title: "External service token"
       description: |-
         Access token to use external cloud services (ex. Remote TestKit) for testing.
-        Required when you have selected **other than Magic Pod** for _Environment_.
+        Required when you have selected **Remote Testkit** for _Environment_.
       is_expand: true
       is_sensitive: true
+  - external_service_user_name: 
+    opts:
+      title: "External service user name"
+      description: |-
+        User name which is required when you select **Remote TestKit Onpremise**.
+      is_expand: true
+  - external_service_password:
+    opts:
+      title: "External service password"
+      description: |-
+        Password which is required when you select **Remote TestKit Onpremise**.
+      is_expand: true
+      is_sensitive: true
+  - external_service_server_url:
+    opts:
+      title: "External service server url"
+      description: |-
+        Server url which is required when you select **Remote TestKit Onpremise**.
+      is_expand: true
   - os: "iOS"
     opts:
       title: "OS"
@@ -108,7 +127,7 @@ inputs:
         Currently you can select only
 
         * _Simulator_ for Magic Pod cloud service.
-        * _Real Device_ for Remote TestKit.
+        * _Real Device_ for Remote TestKit and Remote TestKit Onpremise.
       is_required: true
       is_expand: true
       value_options:
@@ -131,7 +150,7 @@ inputs:
         Currently you can select only
 
         * _iPhone 8_ for Magic Pod cloud service.
-        * For Remote TestKit, please refer to model list on https://appkitbox.com/testkit/devicelist/.
+        * For Remote TestKit and Remote TestKit Onpremise, please refer to model list on https://appkitbox.com/testkit/devicelist/.
       is_required: true
       is_expand: true
   - app_type: "App file (cloud upload)"
