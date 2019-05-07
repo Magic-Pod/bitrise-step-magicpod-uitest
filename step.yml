@@ -88,27 +88,27 @@ inputs:
       title: "External service token"
       description: |-
         Access token to use external cloud services (ex. Remote TestKit) for testing.
-        Required when you have selected **Remote Testkit** for _Environment_.
+        Required when you have selected __Remote Testkit__ for _Environment_.
       is_expand: true
       is_sensitive: true
   - external_service_user_name: 
     opts:
       title: "External service user name"
       description: |-
-        User name which is required when you select **Remote TestKit Onpremise**.
+        User name which is required when you select __Remote TestKit Onpremise__.
       is_expand: true
   - external_service_password:
     opts:
       title: "External service password"
       description: |-
-        Password which is required when you select **Remote TestKit Onpremise**.
+        Password which is required when you select __Remote TestKit Onpremise__.
       is_expand: true
       is_sensitive: true
   - external_service_server_url:
     opts:
       title: "External service server url"
       description: |-
-        Server url which is required when you select **Remote TestKit Onpremise**.
+        Server url which is required when you select __Remote TestKit Onpremise__.
       is_expand: true
   - os: "iOS"
     opts:
