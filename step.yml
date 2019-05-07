@@ -52,8 +52,9 @@ inputs:
       title: "Magic Pod API token"
       description: |-
         Access token to use Magic Pod Web API.
-        Key: Arbitrary new Secret Env name like MAGIC_POD_API_TOKEN
-        Value: API token copied from https://magic-pod.com/accounts/api-token/. 
+        
+        * Key: Arbitrary new Secret Env name like `MAGIC_POD_API_TOKEN`
+        * Value: API token copied from https://magic-pod.com/accounts/api-token/. 
       is_required: true
       is_expand: true
       is_sensitive: true
@@ -62,7 +63,7 @@ inputs:
       title: "Organization name"
       description : |-
         Organization name in Magic Pod.
-        Please be sured to use **organization name**, not **display name**.
+        Please be sure to use **organization name**, not **display name**.
       is_required: true
       is_expand: true
   - project_name:
@@ -70,7 +71,7 @@ inputs:
       title: "Project name"
       description : |-
         Project name in Magic Pod.
-        Please be sured to use **project name**, not **display name**.
+        Please be sure to use **project name**, not **display name**.
       is_required: true
       is_expand: true
   - environment: "Magic Pod"
@@ -97,7 +98,6 @@ inputs:
         Currently you can select only 
 
         * _iOS_ for Magic Pod cloud service.
-        * _Android_ for Remote TestKit.
       is_required: true
       value_options: ["iOS", "Android"]
       is_expand: true
