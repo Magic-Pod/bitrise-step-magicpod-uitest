@@ -371,7 +371,7 @@ func main() {
 	if err := os.Unsetenv("magic_pod_api_token"); err != nil {
 		failf("Failed to remove API key data from envs, error: %s", err)
 	}
-	if err := os.Unsetenv("external_cloud_token"); err != nil {
+	if err := os.Unsetenv("external_service_token"); err != nil {
 		failf("Failed to remove external service API key data from envs, error: %s", err)
 	}
 	if err := os.Unsetenv("external_service_password"); err != nil {
