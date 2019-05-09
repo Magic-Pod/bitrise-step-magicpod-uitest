@@ -191,12 +191,9 @@ inputs:
         Specify the unique ID for the iOS app under test. 
         * ex) `com.apple.Preferences`
 
-        This field is required when you select _iOS_ for _OS_ and one of the following conditions.
-        1. When you select _Installed_ for _App type_.
-        2. When you select _Remote TestKit_ for _Environment_ and _App file (URL)_ for _App type_
-        3. When you select _Remote TestKit_ for _Environment_ and _App file (cloud upload)_ for _App type_
-        4. When you select _Remote TestKit Onpremise_ for _Environment_ and _App file (URL)_ for _App type_
-        5. When you select _Remote TestKit Onpremise_ for _Environment_ and _App file (cloud upload)_ for _App type_
+        This field is required in one of the following conditions.
+        1. When you select _iOS_ for _OS_ and _Installed_ for _App type_.
+        2. When you select _iOS_ for _OS_ and _Remote TestKit_ or _Remote TestKit Onpremise_ for _Environment_.
       is_expand: true
   - app_package: 
     opts:
