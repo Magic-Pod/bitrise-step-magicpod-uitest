@@ -88,7 +88,7 @@ inputs:
       title: "External service token"
       description: |-
         Access token to use external cloud services (ex. Remote TestKit) for testing.
-        Required when you have selected _Remote Testkit_ for _Environment_.
+        Required when you select _Remote Testkit_ for _Environment_.
       is_expand: true
       is_sensitive: true
   - external_service_user_name: 
@@ -172,8 +172,8 @@ inputs:
     opts:
       title: "App path"
       description: |-
-        Required when you have selected _App file (cloud upload)_ for _App type_.
-        
+        Required when you select _App file (cloud upload)_ for _App type_.
+        Note that _Bundle ID_ is also required when you select _iOS_ for _OS_ and _Remote TestKit_ or _Remote TestKit Onpremise_ for _Environment_ due to their restriction.
         * *Warning: The file of the specified path is uploaded to Magic Pod cloud and can be seen by project members.*
         * For iOS simulator testing, specify the directory _xx.app_ so that included files are automatically ziped into one file before uploading. 
       is_expand: true
@@ -181,21 +181,25 @@ inputs:
     opts:
       title: "App URL"
       description: |-
-        Required when you have selected _App file (URL)_ for _App type_.
+        Required when you select _App file (URL)_ for _App type_.
+        Note that _Bundle ID_ is also required when you select _iOS_ for _OS_ and _Remote TestKit_ or _Remote TestKit Onpremise_ for _Environment_ due to their restriction.
       is_expand: true
   - bundle_id: 
     opts:
       title: "Bundle ID"
       description : |-
-        Required when you have selected _iOS_ for _OS_ and _Installed_ for _App type_.
-
+        Specify the unique ID for the iOS app under test. 
         * ex) `com.apple.Preferences`
+
+        This field is required in one of the following conditions.
+        1. When you select _iOS_ for _OS_ and _Installed_ for _App type_.
+        2. When you select _iOS_ for _OS_ and _Remote TestKit_ or _Remote TestKit Onpremise_ for _Environment_.
       is_expand: true
   - app_package: 
     opts:
       title: "App package"
       description: |-
-        Required when you have selected _Android_ for _OS_ and _Installed_ for _App type_.
+        Required when you select _Android_ for _OS_ and _Installed_ for _App type_.
 
         * ex) `com.android.settings`
       is_expand: true
@@ -203,7 +207,7 @@ inputs:
     opts:
       title: "App activity"
       description: |-
-        Required when you have selected _Android_ for _OS_ and _Installed_ for _App type_.
+        Required when you select _Android_ for _OS_ and _Installed_ for _App type_.
 
         * ex) `.Settings`
       is_expand: true
