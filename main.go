@@ -251,7 +251,7 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 		params["external_service_token"] = cfg.ExternalServiceToken
 	} else if cfg.Environment == "remote_testkit_onpremise" {
 		params["external_service_server_url"] = cfg.ExternalServiceServerURL
-    	params["external_service_user_name"] = cfg.ExternalServiceUserName
+    params["external_service_user_name"] = cfg.ExternalServiceUserName
 		params["external_service_password"] = cfg.ExternalServicePassword
 	}
 	params["os"] = cfg.OsName
@@ -263,21 +263,21 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 	case "app_file":
 		params["app_file_number"] = appFileNumber
 		if cfg.OsName == "ios" {
-    	    if cfg.Environment == "remote_testkit" {
-    			params["bundle_id"] = cfg.BundleID
-    	    } else if cfg.Environment == "remote_testkit_onpremise" {
-    			params["bundle_id"] = cfg.BundleID
-    	    }
+	    if cfg.Environment == "remote_testkit" {
+        params["bundle_id"] = cfg.BundleID
+      } else if cfg.Environment == "remote_testkit_onpremise" {
+        params["bundle_id"] = cfg.BundleID
+      }
 		}
 		break
 	case "app_url":
 		params["app_url"] = cfg.AppURL
 		if cfg.OsName == "ios" {
-    	    if cfg.Environment == "remote_testkit" {
-    			params["bundle_id"] = cfg.BundleID
-    	    } else if cfg.Environment == "remote_testkit_onpremise" {
-    			params["bundle_id"] = cfg.BundleID
-    	    }
+      if cfg.Environment == "remote_testkit" {
+        params["bundle_id"] = cfg.BundleID
+      } else if cfg.Environment == "remote_testkit_onpremise" {
+        params["bundle_id"] = cfg.BundleID
+      }
 		}
 		break
 	case "installed":
