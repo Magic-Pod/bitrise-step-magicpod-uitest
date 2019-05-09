@@ -262,9 +262,23 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 	switch cfg.AppType {
 	case "app_file":
 		params["app_file_number"] = appFileNumber
+		if cfg.OsName == "ios" {
+    	    if cfg.Environment == "remote_testkit" {
+    			params["bundle_id"] = cfg.BundleID
+    	    } else if cfg.Environment == "remote_testkit_onpremise" {
+    			params["bundle_id"] = cfg.BundleID
+    	    }
+		}
 		break
 	case "app_url":
 		params["app_url"] = cfg.AppURL
+		if cfg.OsName == "ios" {
+    	    if cfg.Environment == "remote_testkit" {
+    			params["bundle_id"] = cfg.BundleID
+    	    } else if cfg.Environment == "remote_testkit_onpremise" {
+    			params["bundle_id"] = cfg.BundleID
+    	    }
+		}
 		break
 	case "installed":
 		if cfg.OsName == "ios" {

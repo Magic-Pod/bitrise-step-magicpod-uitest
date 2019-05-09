@@ -174,7 +174,8 @@ inputs:
       description: |-
         Required when you have selected _App file (cloud upload)_ for _App type_.
         
-        * *Warning: The file of the specified path is uploaded to Magic Pod cloud and can be seen by project members.*
+        * *Warning1: _Bundle ID_ is also required when you select _iOS_ for _OS_ and _Remote TestKit_ or _Remote TestKit Onpremise_ for _Environment_ due to their restriction.
+        * *Warning2: The file of the specified path is uploaded to Magic Pod cloud and can be seen by project members.*
         * For iOS simulator testing, specify the directory _xx.app_ so that included files are automatically ziped into one file before uploading. 
       is_expand: true
   - app_url:
@@ -182,12 +183,19 @@ inputs:
       title: "App URL"
       description: |-
         Required when you have selected _App file (URL)_ for _App type_.
+        
+        * *Warning: _Bundle ID_ is also required when you select _iOS_ for _OS_ and _Remote TestKit_ or _Remote TestKit Onpremise_ for _Environment_ due to their restriction.
       is_expand: true
   - bundle_id: 
     opts:
       title: "Bundle ID"
       description : |-
-        Required when you have selected _iOS_ for _OS_ and _Installed_ for _App type_.
+        Required when you select _iOS_ for _OS_ and one of the following conditions.
+        1. When you select _Installed_ for _App type_.
+        2. When you select _Remote TestKit_ for _Environment_ and _App file (URL)_ for _App type_
+        3. When you select _Remote TestKit_ for _Environment_ and _App file (cloud upload)_ for _App type_
+        4. When you select _Remote TestKit Onpremise_ for _Environment_ and _App file (URL)_ for _App type_
+        5. When you select _Remote TestKit Onpremise_ for _Environment_ and _App file (cloud upload)_ for _App type_
 
         * ex) `com.apple.Preferences`
       is_expand: true
