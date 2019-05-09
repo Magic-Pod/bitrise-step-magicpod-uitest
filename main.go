@@ -187,8 +187,10 @@ func convertDeviceLanguageParam(input string) (string, error) {
 		return "en", nil
 	case "Japanese":
 		return "ja", nil
+	case "Korean":
+		return "ko", nil
 	default:
-		return "", errors.New("Device language should be 'Default', 'English' or 'Japanese'")
+		return "", errors.New("Device language should be 'Default', 'English', 'Japanese' or 'Korean'")
 	}
 }
 
