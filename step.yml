@@ -252,6 +252,7 @@ inputs:
         - "Default"
         - "English"
         - "Japanese"
+        - "Korean"
       is_expand: true
       category: "detail"
   - device_region: "Default"
