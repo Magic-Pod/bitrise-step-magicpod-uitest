@@ -54,9 +54,10 @@ type UploadFile struct {
 
 // TestCases : Part of response from batch-run API. It stands for number of test cases
 type TestCases struct {
-	Succeeded int `json:"succeeded"`
-	Failed    int `json:"failed"`
-	Total     int `json:"total"`
+	Succeeded  int `json:"succeeded"`
+	Failed     int `json:"failed"`
+	Unresolved int `json:"unresolved"`
+	Total      int `json:"total"`
 }
 
 // BatchRun : Response from batch-run API
@@ -82,7 +83,7 @@ func failf(format string, v ...interface{}) {
 
 func handleError(resp *resty.Response, err error) {
 	if err != nil {
-                failf(resp.Status())
+		failf(resp.Status())
 	}
 	if resp.StatusCode() != 200 {
 		errorResp := resp.Error().(*ErrorResponse)
@@ -104,7 +105,7 @@ func handleError(resp *resty.Response, err error) {
 }
 
 // Converts parameters for API call but also validates if any of parameters has a `unselectable` value from GUI(e.g. Okinawa dialect for `Device Language`).
-// We prefer not to validate parameters because it duplicates the API logic on server  
+// We prefer not to validate parameters because it duplicates the API logic on server
 func (cfg *Config) convertToAPIParams() []error {
 	var err error
 	errors := []error{}
@@ -266,7 +267,7 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 		params["app_file_number"] = appFileNumber
 		if cfg.OsName == "ios" {
 			if cfg.Environment == "remote_testkit" {
-				params["bundle_id"] = cfg.BundleID				
+				params["bundle_id"] = cfg.BundleID
 			} else if cfg.Environment == "remote_testkit_onpremise" {
 				params["bundle_id"] = cfg.BundleID
 			}
@@ -430,12 +431,14 @@ func main() {
 	message := fmt.Sprintf("\nMagic Pod test %s: \n"+
 		"\tSucceeded : %d\n"+
 		"\tFailed : %d\n"+
+		"\tUnresolved : %d\n"+
 		"\tTotal : %d\n"+
 		"Please see %s for detail",
-		batchRun.Status, testCases.Succeeded, testCases.Failed, testCases.Total, batchRun.URL)
+		batchRun.Status, testCases.Succeeded, testCases.Failed, testCases.Unresolved, testCases.Total, batchRun.URL)
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_STATUS", batchRun.Status)
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_SUCCEEDED_COUNT", strconv.Itoa(testCases.Succeeded))
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_FAILED_COUNT", strconv.Itoa(testCases.Failed))
+	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_UNRESOLVED_COUNT", strconv.Itoa(testCases.Unresolved))
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_TOTAL_COUNT", strconv.Itoa(testCases.Total))
 	switch batchRun.Status {
 	case "succeeded":
