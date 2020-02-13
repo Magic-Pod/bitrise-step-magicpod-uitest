@@ -113,10 +113,6 @@ inputs:
   - os: "iOS"
     opts:
       title: "OS"
-      description: |-
-        Currently you can select only 
-
-        * _iOS_ for Magic Pod cloud service.
       is_required: true
       value_options: ["iOS", "Android"]
       is_expand: true
@@ -126,7 +122,7 @@ inputs:
       description: |-
         Currently you can select only
 
-        * _Simulator_ for Magic Pod cloud service.
+        * _Simulator_ or _Emulator_ for Magic Pod cloud service.
         * _Real Device_ for Remote TestKit and Remote TestKit Onpremise.
       is_required: true
       is_expand: true
@@ -134,22 +130,19 @@ inputs:
         - "Simulator"
         - "Emulator"
         - "Real Device"
-  - version: "12.1"
+  - version: "13.1"
     opts:
       title: "Version"
       description: |-
-        Currently you can select only 
-
-        * _12.1_ for Magic Pod cloud service.
+        When you use Magic Pod cloud environment, you don't care about this field.
+        Version is automatically replaced with the one currently supported by Magic Pod.
       is_required: true
       is_expand: true
   - model: "iPhone 8"
     opts:
       title: "Model"
       description: |-
-        Currently you can select only
-
-        * _iPhone 8_ for Magic Pod cloud service.
+        * For Magic Pod cloud environment, please see available model list on your project's batch run page.
         * For Remote TestKit and Remote TestKit Onpremise, please refer to model list on https://appkitbox.com/testkit/devicelist/.
       is_required: true
       is_expand: true
