@@ -54,9 +54,10 @@ type UploadFile struct {
 
 // TestCases : Part of response from batch-run API. It stands for number of test cases
 type TestCases struct {
-	Succeeded int `json:"succeeded"`
-	Failed    int `json:"failed"`
-	Total     int `json:"total"`
+	Succeeded  int `json:"succeeded"`
+	Failed     int `json:"failed"`
+	Unresolved int `json:"unresolved"`
+	Total      int `json:"total"`
 }
 
 // BatchRun : Response from batch-run API
@@ -430,12 +431,14 @@ func main() {
 	message := fmt.Sprintf("\nMagic Pod test %s: \n"+
 		"\tSucceeded : %d\n"+
 		"\tFailed : %d\n"+
+		"\tUnresolved : %d\n"+
 		"\tTotal : %d\n"+
 		"Please see %s for detail",
-		batchRun.Status, testCases.Succeeded, testCases.Failed, testCases.Total, batchRun.URL)
+		batchRun.Status, testCases.Succeeded, testCases.Failed, testCases.Unresolved, testCases.Total, batchRun.URL)
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_STATUS", batchRun.Status)
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_SUCCEEDED_COUNT", strconv.Itoa(testCases.Succeeded))
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_FAILED_COUNT", strconv.Itoa(testCases.Failed))
+	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_UNRESOLVED_COUNT", strconv.Itoa(testCases.Unresolved))
 	tools.ExportEnvironmentWithEnvman("MAGIC_POD_TEST_TOTAL_COUNT", strconv.Itoa(testCases.Total))
 	switch batchRun.Status {
 	case "succeeded":

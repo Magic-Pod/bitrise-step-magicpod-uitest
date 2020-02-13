@@ -316,6 +316,11 @@ outputs:
       title: "MAGIC_POD_TEST_FAILED_COUNT"
       summary: |-
         The number of failed test cases in the batch run.
+  - MAGIC_POD_TEST_UNRESOLVED_COUNT:
+    opts:
+      title: "MAGIC_POD_TEST_UNRESOLVED_COUNT"
+      summary: |-
+        The number of unresolved test cases in the batch run.
   - MAGIC_POD_TEST_TOTAL_COUNT:
     opts:
       title: "MAGIC_POD_TEST_TOTAL_COUNT"
