@@ -39,6 +39,8 @@ type Config struct {
 	AppActivity              string          `env:"app_activity"`
 	WaitForResult            bool            `env:"wait_for_result"`
 	SendMail                 string          `env:"send_mail"`
+	TestCaseNumbers          string          `env:"test_case_numbers"`
+	TestCaseNumbersList      []int           `-`  // set after stepConf parsing
 	RetryCount               int             `env:"retry_count"`
 	CaptureType              string          `env:"capture_type,required"`
 	DeviceLanguage           string          `env:"device_language"`
@@ -119,6 +121,10 @@ func (cfg *Config) convertToAPIParams() []error {
 	if err != nil {
 		errors = append(errors, err)
 	}
+	cfg.TestCaseNumbersList, err = convertTestCaseNumber(cfg.TestCaseNumbers)
+	if err != nil {
+		errors = append(errors, err)
+	}
 	cfg.CaptureType, err = convertCaptureTypeParam(cfg.CaptureType)
 	if err != nil {
 		errors = append(errors, err)
@@ -165,6 +171,24 @@ func convertAppTypeParam(input string) (string, error) {
 	default:
 		return "", errors.New("App type should be either of 'App file (cloud upload)', 'App file (URL)', or 'Installed app'")
 	}
+}
+
+func convertTestCaseNumber(input string) ([]int, error) {
+	trimmedInput := strings.TrimSpace(input)
+	if trimmedInput == "" {
+		return []int{}, nil
+	}
+	strList := strings.Split(trimmedInput, ",")
+	result := []int{}
+	for _, eachStr := range strList {
+		eachStr = strings.TrimSpace(eachStr)
+		eachInt, err := strconv.Atoi(eachStr)
+		if err != nil {
+			return []int{}, fmt.Errorf("TestCaseNumber %s should be integer", eachStr)
+		}
+		result = append(result, eachInt)
+	}
+	return result, nil
 }
 
 func convertCaptureTypeParam(input string) (string, error) {
@@ -293,6 +317,7 @@ func createStartBatchRunParams(cfg Config, appFileNumber int) map[string]interfa
 		break
 	}
 	params["send_mail"] = cfg.SendMail
+	params["test_case_numbers"] = cfg.TestCaseNumbersList
 	params["retry_count"] = cfg.RetryCount
 	params["capture_type"] = cfg.CaptureType
 	params["device_language"] = cfg.DeviceLanguage
@@ -376,10 +401,10 @@ func main() {
 	if err := stepconf.Parse(&cfg); err != nil {
 		failf(err.Error())
 	}
-	enumErr := cfg.convertToAPIParams()
-	if len(enumErr) != 0 {
-		for i := range enumErr {
-			log.Errorf("- %s", enumErr[i].Error())
+	errors := cfg.convertToAPIParams()
+	if len(errors) != 0 {
+		for i := range errors {
+			log.Errorf("- %s", errors[i].Error())
 		}
 		os.Exit(1)
 	}
