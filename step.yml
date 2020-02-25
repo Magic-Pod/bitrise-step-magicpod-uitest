@@ -219,6 +219,12 @@ inputs:
         - "true"
         - "false"
       is_required: true
+  - test_case_numbers: ""
+    opts:
+      title: "Test case numbers"
+      description: |-
+        Specify which test cases to be executed by command-separated test case numbers. If no number is specified, all test cases will be executed.
+      category: "detail"
   - retry_count: "0"
     opts:
       title: "Retry count"
