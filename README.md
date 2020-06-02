@@ -1,6 +1,6 @@
 # magicpod-uitest
 
-**This step is deprecated. Please use [the new step](https://github.com/Magic-Pod/bitrise-step-magic-pod) instead.
+**This step is deprecated. Please use [the new step](https://github.com/Magic-Pod/bitrise-step-magic-pod) instead.**
 
 Magic Pod UI test step
 

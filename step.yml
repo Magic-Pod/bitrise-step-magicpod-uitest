@@ -10,10 +10,8 @@
 title: |-
   Magic Pod UI test (Deprecated)
 summary: |
-  Magic Pod UI test step
   This step is deprecated.
 description: |
-  Magic Pod UI test step
   This step is deprecated. Please use the new step "Magic Pod" instead.
 website: https://github.com/magic-Pod/bitrise-step-magicpod-uitest
 source_code_url: https://github.com/magic-Pod/bitrise-step-magicpod-uitest
